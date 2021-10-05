@@ -3,7 +3,7 @@ Oware-Web-Game
 
 Author(s): Elton Lucien
 
-# Oware is a board game of African origin that has been passed down for geerations.
+# Oware is a board game of African origin that has been passed down for generations.
 There are various versions of the game, but we will be following the 2-3 version, where you can capture your enemy's 
 dots if the current hole has 2-3 dots.
 You can also subsequently capture any previous hole adjacents to the one you are collecting, provided they meet the 2-3
