@@ -1,0 +1,106 @@
+@import url("https://fonts.googleapis.com/css2?family=Odibee+Sans&display=swap");
+
+:root {
+  --light-color: #fdf4f5;
+  --pink-color: #dc5c4f;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:visited {
+  color: var(--pink-color);
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  background-color: antiquewhite;
+  height: 100vh;
+  width: 99vw;
+  font-family: "Odibee sans";
+  overflow-y: hidden;
+}
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  min-height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(3px);
+  z-index: 3;
+  transition: all 0.8s ease-in-out;
+}
+main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--pink-color);
+  background-image: url("./images/bg.jpg");
+  margin: auto;
+  margin-top: 3%;
+  min-height: 90%;
+  max-width: 80%;
+  background-position: center;
+  background-size: cover;
+  transition: all 0.8s ease-in-out;
+}
+
+.begin {
+  position: absolute;
+  cursor: pointer;
+  z-index: 5;
+  background-color: #fdf4f5;
+  padding: 10px;
+  border-radius: 5px;
+  transition: all 0.8s ease-in-out;
+}
+
+.begin:hover {
+  background-color: #dc5c4f;
+  color: #fdf4f5;
+}
+.opaque {
+  opacity: 0.5;
+}
+
+main:hover {
+  opacity: 1;
+}
+
+.no-display {
+  display: none;
+}
+
+.game {
+  margin: auto;
+}
+
+.game img {
+  max-width: 100%;
+}
+.holes-1,
+.holes-2 {
+  display: flex;
+}
+
+.holes-2 .hole {
+  background-color: var(--light-color);
+  border-color: var(--pink-color);
+}
+
+.margin-20 {
+  margin-top: 20px;
+}
+
+.active {
+  transform: scale(1.15);
+  border-style: solid;
+  border-width: 3px;
+}
