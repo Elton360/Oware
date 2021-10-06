@@ -6,14 +6,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Oware - Online Game</title>
     <link rel="stylesheet" href="style.css" />
+    <script src="https://kit.fontawesome.com/2d1cf4437e.js" crossorigin="anonymous"></script>
+
   </head>
   <body>
-    <main class="bg-image">
-      <div id="play" href=""></div>
-        <header class="begin"><h1>Let's Play</h1></header>
+
+    <main class="bg-image ">
+
+      <div class="options">
+        <div class="home no-opacity"><i class=" fas fa-home"></i></div>
+        <div class="settings"><i class="fas fa-sliders-h"></i></div>
+        <div class="help"><i class="fas fa-question"></i></div>
+        <div class="restart no-opacity"><i class="fas fa-redo"></i></div>
+      </div>
+      
+      <header class="pop begin"><h1>Let's Play</h1></header>
+      
+      <div class="modal  pop how-to no-display">
+        <button class="close-modal">&times;</button>
+        <h1>How to Play?</h1>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+          tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+          veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+          commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
+          velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
+          occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+          mollit anim id est laborum.
+        </p>
+      </div>
       <section class="game">
         <div class="holes-1">
-          <img src="./images/holes-pink/pink-1.png" alt="">
+          <img id = "test" src="./images/holes-pink/pink-1.png" alt="">
           
         </div>
           
@@ -21,6 +45,11 @@
           <img src="./images/holes-white/white-1.png" alt="">
         </div>
       </section>
+      </div>
+
+      <div class="scores">
+        <div class="score-1"><h1>0</h1></div>
+        <div class="score-2"><h1>0</h1></div>
       </div>
     </main>
 

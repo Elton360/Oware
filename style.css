@@ -37,8 +37,32 @@ body {
   z-index: 3;
   transition: all 0.8s ease-in-out;
 }
+
+.options {
+  display: flex;
+  position: absolute;
+  top: 10%;
+  left: 10%;
+  max-width: 6rem;
+  z-index: 7;
+}
+
+.fas {
+  margin: 5px;
+  padding: 5px;
+  border-radius: 5px;
+  background-color: var(--light-color);
+  color: #000;
+}
+
+.fas:hover {
+  cursor: pointer;
+  background-color: var(--pink-color);
+  transition: all 0.8s ease-in-out;
+}
 main {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   color: var(--pink-color);
@@ -52,26 +76,112 @@ main {
   transition: all 0.8s ease-in-out;
 }
 
-.begin {
+.pop {
   position: absolute;
   cursor: pointer;
   z-index: 5;
-  background-color: #fdf4f5;
+  background-color: var(--light-color);
   padding: 10px;
   border-radius: 5px;
   transition: all 0.8s ease-in-out;
 }
 
-.hole-img {
-  margin: 0.6rem;
-  opacity: 1;
-  transition: all 2s ease-in-out;
+.modal {
+  padding: 5rem 2rem;
+  color: #000;
+  max-width: 30%;
+  transition: all 0.5s ease-in-out;
+}
+
+.close-modal {
+  position: absolute;
+  top: 4px;
+  right: 2rem;
+  font-size: 5rem;
+  color: var(--pink-color);
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+.close-modal:hover {
+  transform: rotate(180deg);
+  transition: all 0.5s ease-in-out;
+}
+
+.hole {
+  border: 1px solid transparent;
+  margin: 0.5rem;
+  transition: all 0.5s ease-in-out;
+}
+
+.pink-hole:hover,
+.white-hole:hover {
+  border-radius: 50%;
+  transform: rotate(420deg);
+  border: 1px solid var(--light-color);
+  transition: all 0.5s ease-in-out;
+}
+
+.white-hole:hover {
+  border: 1px solid var(--pink-color);
 }
 
 .begin:hover {
-  background-color: #dc5c4f;
-  color: #fdf4f5;
+  background-color: var(--pink-color);
+  color: var(--light-color);
 }
+
+.playImg1 {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.playImg2 {
+  flex-direction: column;
+}
+.playPass {
+  display: flex;
+  margin: 4px;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.play,
+.drop {
+  border-radius: 50%;
+  padding: 8px;
+  background-color: var(--light-color);
+}
+
+.play:hover,
+.drop:hover {
+  cursor: pointer;
+  color: var(--light-color);
+  background-color: var(--pink-color);
+  transition: all 0.2s ease-in-out;
+}
+
+.scores {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.score-1,
+.score-2 {
+  margin: 1rem 3rem;
+  padding: 3rem;
+  border-radius: 15px;
+  background-color: var(--light-color);
+}
+
+.score-2 {
+  color: var(--light-color);
+  background-color: var(--pink-color);
+}
+
 .opaque {
   opacity: 0.5;
 }
@@ -80,12 +190,22 @@ main:hover {
   opacity: 1;
 }
 
+.no-opacity {
+  opacity: 0.02;
+  transition: all 0.9s ease-in-out;
+}
+
+.no-visibility {
+  visibility: hidden;
+}
+
 .no-display {
   display: none;
 }
 
 .game {
   margin: auto;
+  margin-bottom: 1rem;
 }
 
 .game img {
@@ -94,11 +214,6 @@ main:hover {
 .holes-1,
 .holes-2 {
   display: flex;
-}
-
-.holes-2 .hole {
-  background-color: var(--light-color);
-  border-color: var(--pink-color);
 }
 
 .margin-20 {
