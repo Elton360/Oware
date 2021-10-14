@@ -89,8 +89,37 @@ main {
 .modal {
   padding: 5rem 2rem;
   color: #000;
-  max-width: 30%;
+  max-width: 50%;
+  max-height: 70%;
   transition: all 0.5s ease-in-out;
+  overflow: scroll;
+}
+
+.modal-content {
+  margin: 1rem;
+}
+
+.modal-content p {
+  margin: 1rem;
+}
+
+.modal-content h2,
+.modal-content h1,
+.modal-content h3 {
+  margin-top: 1rem;
+}
+
+.home-conf {
+  display: block;
+  color: var(--light-color);
+  margin-left: auto;
+  margin-right: auto;
+  background-color: var(--pink-color);
+  border-radius: 5px;
+  border: none;
+  padding: 0.5rem;
+  font: inherit;
+  cursor: pointer;
 }
 
 .close-modal {
@@ -195,12 +224,18 @@ main:hover {
   transition: all 0.9s ease-in-out;
 }
 
+.opacity {
+  opacity: 1;
+  transition: all 0.9s ease-in-out;
+}
+
 .no-visibility {
   visibility: hidden;
 }
 
 .no-display {
   display: none;
+  transition: all 0.8s ease-in-out;
 }
 
 .game {
