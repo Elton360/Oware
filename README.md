@@ -13,7 +13,7 @@ Use this link to watch a vid explaining the rules: https://www.youtube.com/watch
 
 
 ## Installation
-Until Full Completion, Oware will remain offline. Feel free to clone this repository and run it on a local machine.
+Until Full Completion, Oware will remain offline (a live demo can be found at eltonlucien.com/oware/index.html). Feel free to clone this repository and run it on a local machine.
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
