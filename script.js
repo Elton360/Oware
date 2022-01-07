@@ -14,6 +14,8 @@ const help = document.querySelector(".help");
 const settings = document.querySelector(".settings");
 const score1Box = document.querySelector(".score-1");
 const score2Box = document.querySelector(".score-2");
+const scores = document.querySelector(".scores");
+const win = document.querySelector(".winner");
 const main = document.getElementsByTagName('main');
 const menuOptions = [restart, home, help, settings];
 
@@ -40,7 +42,14 @@ const starter = function () {
   begin.style.display = "flex";
   setOpacity(restart, '0', 'hidden');
   setOpacity(home, '0', 'hidden');
-
+  setOpacity(win, '0', 'hidden'); 
+  setOpacity(hole1, '1', 'visible');
+  setOpacity(hole2, '1', 'visible');
+  score1 = 0;
+  score2 = 0;
+  scores.style.zIndex = '1';
+  game.style.zIndex ='1';
+  score1Box.innerHTML = score2Box.innerHTML = `<h1>0</h1>`;
   //Display Lets Play throbbing
   let scale = 1.1;
   throb = setInterval(function () {
@@ -203,8 +212,7 @@ const imgClick = function () {
   holeImg.forEach((img, i) => {
 
     img.addEventListener("click", (e) => {
-      if (activePlayer === 0 && i <6 || activePlayer === 1 && i >5 ) {
-
+      if ((activePlayer === 0 && i <6 && positions[Math.abs(i-5)] != 0) || (activePlayer === 1 && i >5 && positions[i] != 0)) {
         playerBlock(img, 1, 'visible', '1.2');
         main[0].addEventListener('click', (mainE)=> {
         if(mainE != e) {
@@ -221,17 +229,37 @@ const imgClick = function () {
   holeIm();
 };
 
+//handles winners
+const winner = function (player, wonHoles, scoreBoxWon, scoreBoxLost, lostHoles) {
+  overlay.style.display = 'flex';
+  scores.style.zIndex = '4';
+  game.style.zIndex ='4';
+  setOpacity(win, '1', 'visible'); 
+  wonHoles.style.transform = 'scale(1.2)';
+  scoreBoxWon.style.transform = 'scale(1.2)';
+  scoreBoxLost.style.transform = 'scale(1)';
+  setOpacity(lostHoles, '0', 'hidden');
+  if (player === 1) 
+    win.classList.add('winner-1');
+
+}
 
 //handles captures
 const capture = function (player, posArr, lastPos) {
   if ((posArr[lastPos] === 2 || posArr[lastPos] === 3) && ((player === 0 && lastPos < 6) || (player === 1 && lastPos >5))) {
-    
+
+    //player 0 and player 1 have switched due to the currentplayer call in holeIm()
     const helper = function (scoreBox, holes, stopper) {
       while (posArr[lastPos] === 3 || posArr[lastPos] === 2 && lastPos != stopper) {
         let playerScore = holes === 1 ? score1+=posArr[lastPos] : score2+=posArr[lastPos];
+        if (playerScore > 24) {
+          if(player === 1)
+            winner(player, hole1, score1Box, score2Box, hole2);
+          if(player === 0)
+            winner(player, hole2, score2Box, score1Box, hole1);
+        }
         scoreBox.innerHTML = `<h1>${playerScore}</h1>`;
         holes === 1 ? holes2[lastPos-6]=0 : holes1[lastPos]=0;
-        console.log(holes1, holes2, holes)
         lastPos--;
       }
     }
