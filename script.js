@@ -1,69 +1,89 @@
+"use strict";
+const selectRandomPlayer = () => Math.floor(Math.random() * (1 - 0 + 1) + 0);
+
+const setMenuOptionsVisibility = function (options, visibility) {
+  const opacity = visibility === "visible" ? "1" : "0";
+
+  options.forEach((menuOption) => {
+    menuOption.style.opacity = opacity;
+    menuOption.style.visibility = visibility;
+  });
+};
+
+const defaultHole = [4, 4, 4, 4, 4, 4];
+
 //Selectors//////////////////////////////////
-const mainBG = document.querySelector("main");
 const overlay = document.querySelector(".overlay");
 const modal = document.querySelector(".modal");
 const closeModal = document.querySelector(".close-modal");
 const modalContent = document.querySelector(".modal-content");
-const begin = document.querySelector(".begin");
 const game = document.querySelector(".game");
 const hole1 = document.querySelector(".holes-1");
 const hole2 = document.querySelector(".holes-2");
 const restart = document.querySelector(".restart");
 const home = document.querySelector(".home");
 const help = document.querySelector(".help");
-const settings = document.querySelector(".settings");
+// const settings = document.querySelector(".settings");
 const score1Box = document.querySelector(".score-1");
 const score2Box = document.querySelector(".score-2");
 const scores = document.querySelector(".scores");
 const win = document.querySelector(".winner");
-const main = document.getElementsByTagName('main');
-const menuOptions = [restart, home, help, settings];
+const main = document.getElementsByTagName("main");
+const menuOptions = [restart, home, help /*settings*/];
+
+const player_1 = {
+  holes: [...defaultHole],
+  score: 0,
+};
+
+const player_2 = {
+  holes: [...defaultHole],
+  score: 0,
+};
 
 let activePlayer;
-let holeImg;
-let homeConf;
-let gameStarted;
-let throb;
-let holes1;
-let holes2;
+let board;
+let gameStarted = false;
 let positions;
-let score1 = 0;
-let score2 = 0;
 
-const setOpacity = function (selector, opacity, visibility) {
-  selector.style.opacity = opacity;
-  selector.style.visibility = visibility;
-}
+const displayLetsPlayButton = () => {
+  const beginButton = document.querySelector(".begin");
 
-//Pre-Starting Conditions Setter
-const starter = function () {
-  gameStarted = false;
-  modal.classList.add("no-display");
-  begin.style.display = "flex";
-  setOpacity(restart, '0', 'hidden');
-  setOpacity(home, '0', 'hidden');
-  setOpacity(win, '0', 'hidden'); 
-  setOpacity(hole1, '1', 'visible');
-  setOpacity(hole2, '1', 'visible');
-  score1 = 0;
-  score2 = 0;
-  scores.style.zIndex = '1';
-  game.style.zIndex ='1';
-  score1Box.innerHTML = score2Box.innerHTML = `<h1>0</h1>`;
-  //Display Lets Play throbbing
   let scale = 1.1;
-  throb = setInterval(function () {
-    begin.style.transform = `scale(${scale})`;
+  const throb = setInterval(function () {
+    beginButton.style.transform = `scale(${scale})`;
     if (scale > 1) scale = 1;
     else scale = 1.1;
   }, 800);
 
+  beginButton.addEventListener("click", function (e) {
+    e.preventDefault();
+    gameStarted = true;
+    activePlayer = selectRandomPlayer();
+    setCurrentPlayer(activePlayer);
+    clearInterval(throb);
+    beginButton.style.display = "none";
+    overlay.style.display = "none";
+    setMenuOptionsVisibility([restart, home], "visible");
+    createNewGameBoard();
+  });
+};
+
+//Pre-Starting Conditions Setter
+const startNewGame = function () {
+  gameStarted = false;
+  modal.classList.add("no-display");
+  setMenuOptionsVisibility([restart, home, win], "hidden");
+  setMenuOptionsVisibility([hole1, hole2], "visible");
+
+  displayLetsPlayButton();
+
   //Add Menu options
-  menuOptions.forEach((opt) => {
-    opt.addEventListener("click", modalFunc);
+  menuOptions.forEach((option) => {
+    option.addEventListener("click", () => handleMenuOptionModal(option));
   });
 
-  closeModal.addEventListener("click", (e) => {
+  closeModal.addEventListener("click", () => {
     if (gameStarted) {
       overlay.style.display = "none";
       modal.classList.add("no-display");
@@ -72,240 +92,219 @@ const starter = function () {
 };
 
 //this function displays a modal and adds appropriate html for each menu option
-const modalFunc = function (e) {
-  e.preventDefault();
-
+const handleMenuOptionModal = function (option) {
   //displaying/hiding modal
   modal.classList.remove("no-display");
   overlay.style.display = "flex";
-  overlay.addEventListener("click", (e) => {
-    if (gameStarted) overlay.style.display = "none";
-    modal.classList.add("no-display");
-  });
 
-  if (e.target.parentElement.classList.contains("help")) {
+  if (option === help) {
     modalContent.innerHTML = rulesHtml;
-  } else if (e.target.parentElement.classList.contains("home")) {
-    modalContent.innerHTML = homeHtml;
-    homeConf = document.querySelector(".home-conf");
-  } else if (e.target.parentElement.classList.contains("restart")) {
-    modalContent.innerHTML = restartHtml;
-    homeConf = document.querySelector(".home-conf");
-  }
+  } else if (option === home || option === restart) {
+    if (option === home) modalContent.innerHTML = homeHtml;
+    else modalContent.innerHTML = restartHtml;
+    const homeConf = document.querySelector(".home-conf");
 
-  //player confirms they want to return home
-  homeConf.addEventListener("click", () => {
-    starter();
-  });
-};
-
-//Scale current Player 
-const currentPlayer = function(player) {
-
-  const helper = function (hole_1, scoreBox1, hole_2, scoreBox2) {
-    hole_1.style.transform = 'scale(1.05)';
-    scoreBox1.style.transform = 'scale(1.2)';
-    hole_2.style.transform = 'scale(1)';
-    scoreBox2.style.transform = 'scale(1)';
-  }
-
-  if (player === 0) {
-    helper(hole1, score1Box, hole2, score2Box);
-  }
-  else {
-    helper(hole2, score2Box, hole1, score1Box);
-  }
-
-}
-
-//Now Playing
-const startPlay = function () {
-  begin.addEventListener("click", function (e) {
-    e.preventDefault();
-    gameStarted = true;
-    activePlayer = Math.floor(Math.random() * (1 - 0 + 1) + 0);
-    currentPlayer(activePlayer);
-    clearInterval(throb);
-    begin.style.display = "none";
-    overlay.style.display = "none";
-    setOpacity(restart, '1', 'visible');
-    setOpacity(home, '1', 'visible');
-    holes1 = holes2 = [4, 4, 4, 4, 4, 4];
-    createHoles(holes1, holes2, 700, 150);
-  });
-};
-
-
-//This function displays the holes based on the holes arrays for each player
-const createHoles = function (player1Arr, player2Arr, initTime, increment) {
-  hole1.innerHTML = hole2.innerHTML = "";
-
-  const helper = function (playerArr, player, hole, color, className) {
-    playerArr.forEach((numDots, i) => {
-      let dots;
-      player === 1 ? index = i : index = 11 - i;
-      player === 1 ? dots = numDots : dots = playerArr[5 - i];
-      const html = `
-      <div class = "playImg ${className}">
-        <div class = "playPass no-opacity">
-          <h1 class = "play ${index}">Play</h1>
-          <h1 class = "drop">Drop</h1>
-        </div>
-        <div class ="hole hole-img">
-          <img class = " ${color}-hole"  src="./images/holes-${color}/${color}-${dots}.png" alt="hole">
-        </div>
-      </div>`;
-  
-      setTimeout(function() {
-        hole.insertAdjacentHTML("afterbegin", html);
-      }, sum)
-  
-      sum+=increment;
-        
+    homeConf.addEventListener("click", () => {
+      window.location.reload();
     });
   }
- 
-  let sum = initTime;
-  helper(player1Arr, 1, hole1, 'pink', 'playImg2');
-  helper(player2Arr, 2, hole2, 'white', 'playImg1');
-
-  setTimeout(function() {
-  holeImg = document.querySelectorAll(".hole-img");
-  
-    imgClick();
-  }, initTime*4)
-  
 };
 
+//Scale current Player
+const setCurrentPlayer = (player) => {
+  const playerSettings = [
+    { hole: hole1, scoreBox: score1Box },
+    { hole: hole2, scoreBox: score2Box },
+  ];
 
-const createHoles2 = function (player1Arr, player2Arr, moveOver, position) {
-  const timer = ms => new Promise(res => setTimeout(res, ms));
-  async function load (arr) { 
-    for (let i = position; i <= position+moveOver; i++) {
-      if (i<6 || (i > 11 && i < 18)) {
-        hole1.children[i>11?5-(i-12):5-i].children[1].children[0].src = `./images/holes-pink/pink-${arr[i>11?i-12:i]}.png`;
-      }
-      else if ((i > 5 && i < 12) || (i > 17)) {
-        hole2.children[i>17?i-18:i-6].children[1].children[0].src = `./images/holes-white/white-${player2Arr[i>17?i-18:i-6]}.png`;
-      }
-      
+  playerSettings.forEach(({ hole, scoreBox }, index) => {
+    hole.style.transform = player === index ? "scale(1.05)" : "scale(1)";
+    scoreBox.style.transform = player === index ? "scale(1.2)" : "scale(1)";
+  });
+};
 
-      await timer(200); // then the created Promise can be awaited
+//This function displays the holes based on the holes arrays for each player
+const createNewGameBoard = () => {
+  const increment = 150;
+  hole1.innerHTML = "";
+  hole2.innerHTML = "";
+  let sum = 700;
+
+  const playerData = [
+    { player: 1, hole: hole1, color: "pink", className: "playImg2" },
+    { player: 2, hole: hole2, color: "white", className: "playImg1" },
+  ];
+
+  playerData.forEach(({ player, hole, color, className }) => {
+    Array.from({ length: 6 }).forEach((_, i) => {
+      const index = player === 1 ? i : 11 - i;
+      const html = `
+        <div class="playImg ${className}">
+          <div class="playPass no-opacity">
+            <h1 class="play ${index}">Play</h1>
+            <h1 class="drop">Drop</h1>
+          </div>
+          <div class="hole hole-img">
+            <img class="${color}-hole" src="./images/holes-${color}/${color}-4.png" alt="hole">
+          </div>
+        </div>`;
+
+      setTimeout(() => {
+        hole.insertAdjacentHTML("afterbegin", html);
+      }, sum);
+
+      sum += increment;
+    });
+  });
+
+  setTimeout(() => {
+    board = document.querySelectorAll(".hole-img");
+    addEventListenersToHoles();
+  }, sum);
+};
+
+const updateGameBoard = function (player1Arr, player2Arr, moveOver, position) {
+  const timer = (ms) => new Promise((res) => setTimeout(res, ms));
+  async function load() {
+    for (let i = position; i <= position + moveOver; i++) {
+      if (i < 6 || (i > 11 && i < 18)) {
+        hole1.children[
+          i > 11 ? 5 - (i - 12) : 5 - i
+        ].children[1].children[0].src = `./images/holes-pink/pink-${
+          player1Arr[i > 11 ? i - 12 : i]
+        }.png`;
+      } else if ((i > 5 && i < 12) || i > 17) {
+        hole2.children[
+          i > 17 ? i - 18 : i - 6
+        ].children[1].children[0].src = `./images/holes-white/white-${
+          player2Arr[i > 17 ? i - 18 : i - 6]
+        }.png`;
+      }
+
+      await timer(200);
     }
   }
 
-  load(player1Arr);
-  
+  load();
+
   holeIm();
-    
 };
 
 //ONLY current player's holes are active
-const playerBlock = function (img,opacity,visibility,scale) {
-  opacity === 1 ? img.parentElement.firstChild.nextSibling.classList.add('opacity'):
-  img.parentElement.firstChild.nextSibling.classList.remove('opacity');
+const playerBlock = function (img, opacity, visibility, scale) {
+  opacity === 1
+    ? img.parentElement.firstChild.nextSibling.classList.add("opacity")
+    : img.parentElement.firstChild.nextSibling.classList.remove("opacity");
   img.parentElement.firstChild.nextSibling.style.visibility = visibility;
-  img.style.transform=`scale(${scale})`;
-}
+  img.style.transform = `scale(${scale})`;
+};
 
-const imgClick = function () {
-  holeImg.forEach((img, i) => {
-
-    img.addEventListener("click", (e) => {
-      if ((activePlayer === 0 && i <6 && positions[Math.abs(i-5)] != 0) || (activePlayer === 1 && i >5 && positions[i] != 0)) {
-        playerBlock(img, 1, 'visible', '1.2');
-        main[0].addEventListener('click', (mainE)=> {
-        if(mainE != e) {
-          playerBlock(img, 0, 'hidden', '1');
-        }
-        else {
-          playerBlock(img, 1, 'visible', '1.2');
-        }
-        
+const addEventListenersToHoles = function () {
+  board.forEach((hole, i) => {
+    hole.addEventListener("click", (e) => {
+      if (
+        (activePlayer === 0 && i < 6 && positions[Math.abs(i - 5)] != 0) ||
+        (activePlayer === 1 && i > 5 && positions[i] != 0)
+      ) {
+        playerBlock(hole, 1, "visible", "1.2");
+        main[0].addEventListener("click", (mainE) => {
+          if (mainE != e) {
+            playerBlock(hole, 0, "hidden", "1");
+          } else {
+            playerBlock(hole, 1, "visible", "1.2");
+          }
         });
-      }   
+      }
     });
   });
   holeIm();
 };
 
 //handles winners
-const winner = function (player, wonHoles, scoreBoxWon, scoreBoxLost, lostHoles) {
-  overlay.style.display = 'flex';
-  scores.style.zIndex = '4';
-  game.style.zIndex ='4';
-  setOpacity(win, '1', 'visible'); 
-  wonHoles.style.transform = 'scale(1.2)';
-  scoreBoxWon.style.transform = 'scale(1.2)';
-  scoreBoxLost.style.transform = 'scale(1)';
-  setOpacity(lostHoles, '0', 'hidden');
-  if (player === 1) 
-    win.classList.add('winner-1');
-
-}
+const winner = function (
+  player,
+  wonHoles,
+  scoreBoxWon,
+  scoreBoxLost,
+  lostHoles
+) {
+  overlay.style.display = "flex";
+  scores.style.zIndex = "4";
+  game.style.zIndex = "4";
+  setMenuOptionsVisibility(win, "visible");
+  wonHoles.style.transform = "scale(1.2)";
+  scoreBoxWon.style.transform = "scale(1.2)";
+  scoreBoxLost.style.transform = "scale(1)";
+  setMenuOptionsVisibility(lostHoles, "hidden");
+  if (player === 1) win.classList.add("winner-1");
+};
 
 //handles captures
 const capture = function (player, posArr, lastPos) {
-  if ((posArr[lastPos] === 2 || posArr[lastPos] === 3) && ((player === 0 && lastPos < 6) || (player === 1 && lastPos >5))) {
-
+  if (
+    (posArr[lastPos] === 2 || posArr[lastPos] === 3) &&
+    ((player === 0 && lastPos < 6) || (player === 1 && lastPos > 5))
+  ) {
     //player 0 and player 1 have switched due to the currentplayer call in holeIm()
     const helper = function (scoreBox, holes, stopper) {
-      while (posArr[lastPos] === 3 || posArr[lastPos] === 2 && lastPos != stopper) {
-        let playerScore = holes === 1 ? score1+=posArr[lastPos] : score2+=posArr[lastPos];
+      while (
+        posArr[lastPos] === 3 ||
+        (posArr[lastPos] === 2 && lastPos != stopper)
+      ) {
+        const playerScore =
+          holes === 1
+            ? (player_1.score += posArr[lastPos])
+            : (player_2.score += posArr[lastPos]);
         if (playerScore > 24) {
-          if(player === 1)
-            winner(player, hole1, score1Box, score2Box, hole2);
-          if(player === 0)
-            winner(player, hole2, score2Box, score1Box, hole1);
+          if (player === 1) winner(player, hole1, score1Box, score2Box, hole2);
+          if (player === 0) winner(player, hole2, score2Box, score1Box, hole1);
         }
         scoreBox.innerHTML = `<h1>${playerScore}</h1>`;
-        holes === 1 ? holes2[lastPos-6]=0 : holes1[lastPos]=0;
+        holes === 1
+          ? (player_2.holes[lastPos - 6] = 0)
+          : (player_1.holes[lastPos] = 0);
         lastPos--;
       }
-    }
+    };
 
-    if (player === 1) 
-      helper(score1Box, 1, 5);
-    else 
-      helper(score2Box, 2, -1);
+    if (player === 1) helper(score1Box, 1, 5);
+    else helper(score2Box, 2, -1);
   }
-}
+};
 
 const holeIm = function () {
-  
-  holeImg.forEach((img, i) => {
-    positions = [...holes1, ...holes2];
-    img.parentElement.firstChild.nextSibling.children[0].addEventListener("click", function (e) { 
+  board.forEach((img) => {
+    positions = [...player_1.holes, ...player_2.holes];
+    img.parentElement.firstChild.nextSibling.children[0].addEventListener(
+      "click",
+      function (e) {
+        if (activePlayer === 0) activePlayer = 1;
+        else activePlayer = 0;
+        setCurrentPlayer(activePlayer);
 
-      if (activePlayer ===0) 
-        activePlayer = 1;
-      else 
-        activePlayer = 0;
-      currentPlayer(activePlayer);
-
-      let pos = parseInt(e.target.classList[1]);
-      let moveOver = positions[pos];
-      if (e.target.classList.contains("play")) {
-        for (let i = pos; i < positions[pos] + pos; i++) {
-          if (i >= 11) positions[i - 11]++;
-          else positions[i + 1]++;
+        let pos = parseInt(e.target.classList[1]);
+        let moveOver = positions[pos];
+        if (e.target.classList.contains("play")) {
+          for (let i = pos; i < positions[pos] + pos; i++) {
+            if (i >= 11) positions[i - 11]++;
+            else positions[i + 1]++;
+          }
+          positions[pos] = 0;
         }
-        positions[pos] = 0;
+        player_1.holes = positions.slice(0, 6);
+        player_2.holes = positions.slice(6, 12);
+        playerBlock(img, 0, "hidden", "1");
+        let endingHole =
+          pos + moveOver > 11 ? pos + moveOver - 12 : pos + moveOver;
+        capture(activePlayer, positions, endingHole);
+        updateGameBoard(player_1.holes, player_2.holes, moveOver, pos);
+        e.stopImmediatePropagation();
       }
-      holes1 = positions.slice(0, 6);
-      holes2 = positions.slice(6, 12);
-      playerBlock(img, 0, 'hidden', '1');
-      let endingHole = pos+moveOver > 11? pos+moveOver-12 : pos+moveOver;
-      capture(activePlayer,positions,endingHole);
-      createHoles2(holes1, holes2, moveOver, pos);
-      e.stopImmediatePropagation();
-
-    });
+    );
   });
 };
 
-starter();
-startPlay();
+startNewGame();
 
 const rulesHtml = `
 <h1>How to Play?</h1>
@@ -351,7 +350,7 @@ const rulesHtml = `
  </p>
 
 `;
-const settingsHtml = '';
+
 const homeHtml = `
 <h1>Are you sure you want to return to the home page?</h1>
 <h2>

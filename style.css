@@ -25,6 +25,23 @@ body {
   width: 105vw;
   font-family: "Odibee sans";
 }
+
+ul {
+  list-style-type: none;
+}
+
+button,
+input[type="submit"],
+input[type="reset"] {
+  background: none;
+  color: inherit;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  outline: inherit;
+}
+
 .overlay {
   position: fixed;
   top: 0;
@@ -156,7 +173,6 @@ main {
 .white-hole {
   border: 1px solid transparent;
   border-radius: 50%;
-
 }
 
 .pink-hole:hover,
@@ -164,7 +180,6 @@ main {
   transform: rotate(420deg);
   border: 1px solid var(--light-color);
   transition: all 0.5s ease-in-out;
-  
 }
 
 .white-hole:hover {
@@ -198,7 +213,9 @@ main {
   border-radius: 50%;
   padding: 8px;
   background-color: var(--light-color);
-  transition: all 1s ease-in-out .3s;
+  transition: all 1s ease-in-out 0.3s;
+  align-self: start;
+  margin: 10px;
 }
 
 .play:hover,
@@ -206,7 +223,6 @@ main {
   cursor: pointer;
   color: var(--light-color);
   background-color: var(--pink-color);
-  
 }
 
 .scores {
@@ -249,7 +265,6 @@ main {
   background-color: var(--pink-color);
 }
 
-
 main:hover {
   opacity: 1;
 }
@@ -265,7 +280,6 @@ main:hover {
   visibility: visible;
   transition: all 0.9s ease-in-out;
 }
-
 
 .no-display {
   display: none;
@@ -300,11 +314,9 @@ main:hover {
   border-width: 3px;
 }
 
-
-@media (max-height:650px) {
+@media (max-height: 650px) {
   .score-1,
-.score-2 {
-    
+  .score-2 {
     padding: 2rem;
   }
 
@@ -315,13 +327,10 @@ main:hover {
   }
 }
 
-@media (max-height:560px) {
-
+@media (max-height: 560px) {
   .game {
     margin-top: 5rem;
-    
   }
-
 
   .options {
     top: 2%;
@@ -333,23 +342,21 @@ main:hover {
   }
 
   .scores {
-  width: 10%;
-  bottom: 0rem;
-  right: -5%;
-  top: 1%;
-  bottom: 12rem;
-  margin-top: 2%;
-    
+    width: 10%;
+    bottom: 0rem;
+    right: -5%;
+    top: 1%;
+    bottom: 12rem;
+    margin-top: 2%;
   }
 
-  .playPass h1{
+  .playPass h1 {
     font-size: smaller;
   }
 
   .hole {
     margin-top: 0.1rem;
-    margin-bottom: 0.1rem
-    
+    margin-bottom: 0.1rem;
   }
 
   .winner {
@@ -358,8 +365,10 @@ main:hover {
   }
 }
 
-@media (max-width:420px) {
-  .scores, .begin, .game {
+@media (max-width: 420px) {
+  .scores,
+  .begin,
+  .game {
     opacity: 0;
     visibility: hidden;
     display: none;
@@ -369,6 +378,4 @@ main:hover {
     display: block;
     margin-top: -3rem;
   }
-
-
 }
