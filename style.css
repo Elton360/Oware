@@ -164,26 +164,77 @@ main {
 }
 
 .hole {
+  position: relative;
   border: 1px solid transparent;
   margin: 0.5rem;
   transition: all 0.5s ease-in-out;
 }
 
-.pink-hole,
-.white-hole {
+.hole-svg {
+  width: 112px;
+  height: 112px;
+  display: block;
   border: 1px solid transparent;
   border-radius: 50%;
 }
 
-.pink-hole:hover,
-.white-hole:hover {
+.hole-svg:hover {
   transform: rotate(420deg);
-  border: 1px solid var(--light-color);
   transition: all 0.5s ease-in-out;
 }
 
-.white-hole:hover {
+.holes-1 .hole-svg:hover {
+  border: 1px solid var(--light-color);
+}
+
+.holes-2 .hole-svg:hover {
   border: 1px solid var(--pink-color);
+}
+
+/* Hole/seed colors: one shared shape, recolored per side. The corner badge
+   uses the opposite color from its row's hole fill, so it alternates
+   pink/white per row and stays legible against either background. */
+.holes-1 {
+  --hole-fill: var(--pink-color);
+  --corner-fill: var(--light-color);
+}
+
+.holes-2 {
+  --hole-fill: var(--light-color);
+  --corner-fill: var(--pink-color);
+}
+
+.hole-bg {
+  fill: var(--hole-fill);
+}
+
+.seed-dot,
+.seed-count-badge {
+  fill: #1a1a1a;
+}
+
+.seed-count-badge {
+  font-family: "Odibee Sans", sans-serif;
+  font-size: 32px;
+}
+
+/* Sibling overlay, not part of the SVG, so it stays fixed in the corner
+   instead of spinning with the hole on hover. */
+.corner-badge {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--corner-fill);
+  color: #1a1a1a;
+  font-family: "Odibee Sans", sans-serif;
+  font-size: 13px;
+  pointer-events: none;
 }
 
 .begin:hover {
@@ -194,6 +245,7 @@ main {
 .playImg1 {
   display: flex;
   flex-direction: column-reverse;
+  align-items: center;
 }
 
 .playImg2 {
@@ -265,6 +317,11 @@ main {
   background-color: var(--pink-color);
 }
 
+.winner.draw {
+  color: var(--pink-color);
+  background-color: var(--light-color);
+}
+
 main:hover {
   opacity: 1;
 }
@@ -295,9 +352,6 @@ main:hover {
   transform: translate(-50%, -50%);
 }
 
-.game img {
-  max-width: 100%;
-}
 .holes-1,
 .holes-2 {
   display: flex;
