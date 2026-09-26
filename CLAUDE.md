@@ -4,30 +4,26 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Oware is a browser implementation of the traditional African board game (2-3 capture variant), built as a static site with plain HTML/CSS/JS — no build step, no bundler, no framework. See README.md for the game rules link and live demo location (eltonlucien.com/oware/index.html).
+Oware is a browser implementation of the traditional African board game (Abapa, 2-3 capture variant), built as a static site with plain HTML/CSS and native ES modules: no build step, no bundler, no framework. It is a local two-player (hot-seat) game designed for players sharing one device such as a tablet. See README.md for the rules video and live demo location (eltonlucien.com/oware/index.html).
 
 ## Commands
 
-There is no build, dev-server, or test setup — this is a static site.
-
-- **Run locally**: open `index.html` directly in a browser, or serve the directory with any static file server.
-- **Lint**: `npx eslint .` (uses the flat config in `eslint.config.mjs`, which applies `@eslint/js` recommended rules with browser globals).
-- There are no automated tests in this repo.
+- **Run locally**: serve the directory with any static file server (e.g. `python3 -m http.server`). ES modules don't load over `file://`, so opening `index.html` directly won't work.
+- **Test**: `npm test` (Vitest; covers the pure modules in `src/`).
+- **Lint**: `npx eslint .` (flat config in `eslint.config.mjs`: `@eslint/js` recommended rules with browser globals).
 
 ## Architecture
 
-The entire game lives in `script.js` (no modules/imports — loaded via a single `<script>` tag, runs in the global scope).
+Pure logic (tested, DOM-free) lives in `src/`; DOM code lives in `src/ui/`; `script.js` is the entry point that wires them together.
 
-**Board model**: the 12 holes are represented as a single flat array, `positions`, built each move from `[...player_1.holes, ...player_2.holes]`. Indices 0–5 belong to player 1, indices 6–11 to player 2. Sowing moves counter-clockwise around this circular array (index 11 wraps to 0).
+**Board model** (`src/engine.js`): one flat 12-element `board` array. Indices 0–5 are South (player 0), 6–11 North (player 1). Sowing runs counter-clockwise by increasing index and wraps 11 → 0. `applyMove(state, hole)` returns `{ ok, state, move }`, where `move` describes the `sowPath`, captures and any starvation sweep. Seeds are captured into scores only; there are no store pits in the sowing path.
 
-**Rendering vs. state are decoupled**: `positions`/`player_1.holes`/`player_2.holes` hold the authoritative game state, while `hole1`/`hole2` (`.holes-1`/`.holes-2` DOM elements) are rendered separately. `updateGameBoard()` walks the sown range and animates each affected hole's image via `setTimeout`-staggered DOM updates — it assumes moves span at most two laps around the 12-hole board (its index math branches on ranges up to 23), so seed counts high enough to lap more than that will not render correctly.
+**Notation**: `pitLabel()` in `src/match.js` maps South 0–5 → `1`–`6` and North 6–11 → `A`–`F`, so on screen the North row reads `F E D C B A` left to right.
 
-**Turn flow** (`holeIm()` in script.js): a click on a hole's `.play` label reads `pos` from the element's class name, computes `moveOver` (seed count) from `positions[pos]`, distributes seeds, then calls `capture()` on the landing hole before handing off to `updateGameBoard()` for animation and flipping `activePlayer`.
+**Match layer** (`src/match.js`): wraps the engine state with player names, per-player undo budgets, the move log, timing and seed identities. Every change goes through `dispatch(match, action)` (`move` / `undo` / `agree-draw` / `new-match`), which never mutates its input. For a move it also returns animation `steps`. This single entry point is where a future network opponent would plug in.
 
-**Capture logic** (`capture()`): triggered when the last-sown hole lands in *opponent* territory with 2 or 3 seeds; it then walks backward through consecutive 2-or-3 holes, zeroing them and adding to the capturing player's score. Note the confusing `player` parameter convention here — by the time `capture()` is called, `activePlayer` has already been flipped for the *next* turn, so `player` in this function refers to the player who just moved.
+**Seed identities** (`src/seeds.js`): the engine only tracks counts, so this layer gives each of the 48 seeds a fixed colour and moves ids alongside each engine move, keeping colours physically consistent. `layoutSeed()` gives deterministic scattered positions per slot, so existing seeds never shift when others arrive. Tests assert the seed layer always mirrors board counts and scores.
 
-**Menu/modal system**: `.home`, `.restart`, `.help` icons all funnel through `handleMenuOptionModal()`, which swaps in one of the `rulesHtml` / `homeHtml` / `restartHtml` template strings (defined at the bottom of script.js) into `.modal-content`. Home/restart both just reload the page (`window.location.reload()`) — there is no in-place reset path.
+**Rendering** (`src/ui/`): `board.js` builds the pits once and positions all 48 seed elements absolutely in one overlay layer, measured from the pits' live geometry and re-placed on resize. Moves animate by transitioning each seed's `transform` along `steps`. `panels.js`, `chrome.js` (status bar, log) and `dialogs.js` (native `<dialog>`) re-render from the match on every change. `script.js`'s `commit()` runs dispatch, then animate, then `renderAll()`, and locks input while animating.
 
-**Hole images**: `images/holes-pink/pink-N.png` and `images/holes-white/white-N.png` are pre-rendered sprites for N seeds (0–24+); the game swaps `<img src>` rather than drawing seed counts dynamically.
-
-Known gap (per commit history and README): the codebase has not had a full refactor; state (`player_1`/`player_2`/`positions`) and DOM manipulation are tightly interleaved throughout `script.js` rather than separated into distinct layers.
+**Persistence**: the match is saved to `localStorage` (`oware.match.v1`) after each change and restored on load if `isValidMatch()` passes; player names are remembered separately (`oware.names`). Undo history is capped at the total undo budget to keep the saved match small.
