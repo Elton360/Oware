@@ -2,66 +2,125 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Oware - Online Game</title>
+    <title>Oware · African Board Game</title>
+    <meta name="description" content="Play Oware, the West African sowing game, with two players on one device." />
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
-    <link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico">
-    <script src="https://kit.fontawesome.com/94724ec2e2.js" crossorigin="anonymous"></script>
   </head>
   <body>
-
-    <main class="bg-image ">
-
-      <ul class="options">
-        <li class="home no-opacity"><i class=" fas fa-home"></i></li>
-        <!-- <li class="settings"><i class="fas fa-sliders-h"></i></li> -->
-        <li class="help"><i class="fas fa-question"></i></li>
-        <li class="restart no-opacity"><i class="fas fa-redo"></i></li>
-      </ul>
-      
-      <button class="pop begin"><h1>Let's Play</h1></button>
-      <span class="pop rotate"><h1>Please Rotate</h1></span>
-      
-      <div class="modal pop how-to no-display">
-        <button class="close-modal">&times;</button>
-        <div class="modal-content"></div>
-        
+    <header class="topnav">
+      <div class="brand">
+        <span class="brand-mark" data-icon="logo"></span>
+        <span class="brand-text">
+          <span class="brand-name">Oware</span>
+          <span class="brand-tag">African Board Game</span>
+        </span>
       </div>
-      <section class="game">
-        <div class="holes-1">
-          <img src="./images/holes-pink/pink-1.png" alt="">
-          <img src="./images/holes-pink/pink-1.png" alt="">
-          <img src="./images/holes-pink/pink-1.png" alt="">
-          <img src="./images/holes-pink/pink-1.png" alt="">
-          <img src="./images/holes-pink/pink-1.png" alt="">
-          <img src="./images/holes-pink/pink-1.png" alt="">
-          
-        </div>
-          
-        <div class="holes-2">
-          <img src="./images/holes-white/white-1.png" alt="">
-          <img src="./images/holes-white/white-1.png" alt="">
-          <img src="./images/holes-white/white-1.png" alt="">
-          <img src="./images/holes-white/white-1.png" alt="">
-          <img src="./images/holes-white/white-1.png" alt="">
-          <img src="./images/holes-white/white-1.png" alt="">
-          
-        </div>
+      <nav class="tabs" aria-label="Main">
+        <button class="tab is-selected" type="button" aria-current="page">Play Match</button>
+        <button class="tab" type="button" data-action="rules">How to Play</button>
+      </nav>
+      <button class="round-btn round-btn--accent" type="button" data-action="restart" aria-label="New match" title="New match">
+        <span data-icon="restart"></span>
+      </button>
+    </header>
 
-        <span class="pop winner"><h1>WINNER!</h1></span>
+    <main class="page">
+      <section class="statusbar" aria-label="Match status">
+        <div class="status-group">
+          <span class="pill pill--strong" id="turn-number">Turn 1</span>
+          <span class="status-item">
+            <span data-icon="hourglass"></span>
+            <span class="status-label">Match Clock:</span>
+            <span class="tabular" id="match-clock">00:00</span>
+          </span>
+        </div>
+        <div class="status-group status-center">
+          <span class="pill">
+            <span class="micro">Sowing path:</span>
+            <span data-icon="cycle"></span>
+            Counter-Clockwise Cycle
+          </span>
+        </div>
+        <div class="status-group status-right">
+          <button class="pill pill--button" type="button" data-action="rules" aria-label="Rules and guide">
+            <span data-icon="book"></span><span class="rules-text">Rules &amp; Guide</span>
+          </button>
+          <button class="round-btn" type="button" data-action="sound" id="sound-toggle" aria-pressed="true" aria-label="Sound"></button>
+        </div>
       </section>
-      </div>
 
-      <div class="scores">
-        <div class="score-1"><h1>0</h1></div>
-        <div class="score-2"><h1>0</h1></div>
-      </div>
+      <section class="arena">
+        <article class="card panel" id="panel-north" data-player="1"></article>
+
+        <aside class="card wisdom" aria-label="Traditional wisdom">
+          <span class="wisdom-icon" data-icon="leaf"></span>
+          <div>
+            <p class="micro micro--accent">Traditional Wisdom</p>
+            <p class="wisdom-text" id="wisdom-text"></p>
+          </div>
+        </aside>
+
+        <section class="board-card" aria-label="Oware board">
+          <div class="board-head">
+            <span class="muted small" id="board-head-side"></span>
+            <span class="pill pill--tiny">Solid carved mahogany</span>
+          </div>
+          <div class="board" id="board">
+            <div class="store store--north" data-store="1">
+              <span class="store-count" id="store-count-1">0</span>
+            </div>
+            <div class="groove" aria-hidden="true"></div>
+            <div class="store store--south" data-store="0">
+              <span class="store-count" id="store-count-0">0</span>
+            </div>
+            <div class="seed-layer" aria-hidden="true"></div>
+          </div>
+          <div class="board-foot">
+            <p class="turn-hint">
+              <span class="dot"></span>
+              <strong id="turn-hint-name"></strong>
+              <span class="muted" id="turn-hint-text"></span>
+            </p>
+            <p class="ruleset">
+              <span data-icon="seed"></span>
+              <span><strong>Oware Abapa</strong><span class="muted"> · 2–3 capture rules</span></span>
+            </p>
+          </div>
+        </section>
+
+        <article class="card panel" id="panel-south" data-player="0"></article>
+
+        <aside class="card legend" aria-label="Seed colours">
+          <p class="micro">Polished Seeds (Abiesee)</p>
+          <ul class="legend-list" id="legend-list"></ul>
+        </aside>
+      </section>
+
+      <section class="card gamelog" aria-label="Live game log">
+        <header class="gamelog-head">
+          <h2><span data-icon="log"></span> Live Game Log <span class="muted">· Oware notation</span></h2>
+          <span class="muted small" id="seed-circulation"></span>
+        </header>
+        <ol class="gamelog-list" id="log-list"></ol>
+      </section>
     </main>
 
-    <div class="overlay"></div>
-    
-  </body>
+    <footer class="footer">
+      <p class="footer-left"><span data-icon="seed"></span> Honoring authentic West African Mancala heritage and strategy.</p>
+      <p class="footer-right">
+        <button type="button" class="link" data-action="rules">Tournament Rules</button>
+        <button type="button" class="link" data-action="sound">Tactile Audio Settings</button>
+        <span>© 2026 Elton Lucien</span>
+      </p>
+    </footer>
 
-  <script src="script.js"></script>
+    <dialog class="dialog" id="dialog"></dialog>
+
+    <script type="module" src="script.js"></script>
+  </body>
 </html>
