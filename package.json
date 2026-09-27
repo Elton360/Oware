@@ -3,7 +3,9 @@
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "build": "bash scripts/build.sh",
+    "deploy": "npm test && npm run build && sudo mkdir -p /var/www/oware && sudo rm -rf /var/www/oware/* && sudo cp -r dist/* /var/www/oware/"
   },
   "devDependencies": {
     "@eslint/js": "^9.11.1",

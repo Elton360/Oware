@@ -11,6 +11,8 @@ Oware is a browser implementation of the traditional African board game (Abapa, 
 - **Run locally**: serve the directory with any static file server (e.g. `python3 -m http.server`). ES modules don't load over `file://`, so opening `index.html` directly won't work.
 - **Test**: `npm test` (Vitest; covers the pure modules in `src/`).
 - **Lint**: `npx eslint .` (flat config in `eslint.config.mjs`: `@eslint/js` recommended rules with browser globals).
+- **Build**: `npm run build` stages only runtime files (no tests or tooling) into `dist/` via `scripts/build.sh`.
+- **Deploy**: run `npm run deploy` on the web server itself (same flow as the portfolio site). It tests, builds, then uses `sudo` to replace the contents of `/var/www/oware` with `dist/`.
 
 ## Architecture
 
